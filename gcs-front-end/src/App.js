@@ -4,6 +4,9 @@ import DisarmButton from './components/disarmButton';
 import TakeoffButton from './components/takeoffButton';
 import LandButton from './components/landButton';
 import GpsCoords from './components/gpsCoords';
+import Indicators from './components/indicators';
+import Hud from './components/hud';
+import EsriMap from './components/esriMap';
 
 function App() {
   return (
@@ -13,6 +16,9 @@ function App() {
       <TakeoffButton/>
       <LandButton/>
       <GpsCoords/>
+      <Indicators/>
+      <Hud/>
+      <EsriMap/>
     </div>
   );
 }

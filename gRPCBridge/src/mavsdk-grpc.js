@@ -37,8 +37,11 @@ class MAVSDKDrone {
         this.TelemetryClient = new this.Telemetry.TelemetryService(GRPC_HOST_NAME, grpc.credentials.createInsecure());
 
         this.position = {} // Initialize to an empty object
-
+        this.attitudeEuler = {} // Initialize to an empty object
+        this.heading = {}
         this.SubscribeToGps()
+        this.SubscribeToAttitudeEuler()
+        this.SubscribeToHeading()
     }
 
 
@@ -82,6 +85,22 @@ class MAVSDKDrone {
         });
     }
 
+    Goto(longitude_deg, latitude_deg, altitude_m, yaw_deg)
+    {
+        this.ActionClient.GotoLocation({
+            latitude_deg: parseFloat(latitude_deg),
+            longitude_deg: parseFloat(longitude_deg),
+            absolute_altitude_m: parseFloat(altitude_m),
+            yaw_deg: parseFloat(yaw_deg)
+        }, function(err, actionResponse){
+            console.log(actionResponse);
+            if(err){
+                console.log("Unable to go to: ", err);
+                return;
+            }
+        });
+    }
+
     SubscribeToGps()
     {
         const self = this;
@@ -103,6 +122,58 @@ class MAVSDKDrone {
             return;
         });
         this.GpsCall.on('status', function(status) {
+            console.log(status);
+            return;
+        });
+    }
+
+    SubscribeToAttitudeEuler()
+    {
+        const self = this;
+
+        this.AttitudeEulerCall = this.TelemetryClient.subscribeAttitudeEuler({});
+
+        this.AttitudeEulerCall.on('data', function(attitudeEulerResponse){
+            self.attitudeEuler = attitudeEulerResponse.attitude_euler
+            return; 
+        });
+
+        this.AttitudeEulerCall.on('end', function() {
+            console.log("SubscribeAttitudeEuler request ended");
+            return;
+        });
+
+        this.AttitudeEulerCall.on('error', function(e) {
+            console.log(e)
+            return;
+        });
+        this.AttitudeEulerCall.on('status', function(status) {
+            console.log(status);
+            return;
+        });
+    }
+
+    SubscribeToHeading()
+    {
+        const self = this;
+
+        this.HeadingCall = this.TelemetryClient.subscribeHeading({});
+
+        this.HeadingCall.on('data', function(headingResponse){
+            self.heading = headingResponse.heading_deg
+            return; 
+        });
+
+        this.HeadingCall.on('end', function() {
+            console.log("SubscribeHeading request ended");
+            return;
+        });
+
+        this.HeadingCall.on('error', function(e) {
+            console.log(e)
+            return;
+        });
+        this.HeadingCall.on('status', function(status) {
             console.log(status);
             return;
         });

@@ -64,8 +64,22 @@ app.get('/land', function(req, res){
 
 app.get('/gps', function(req, res){
 
-    console.log("Hellooo from gps!")
+    //console.log("Hellooo from gps!")
     res.send(drone.position)
+});
+
+app.get('/attitudeEuler', function(req, res){
+    
+    res.send(drone.attitudeEuler)
+});
+app.get('/heading', function(req, res){
+    res.send(drone.heading) 
+});
+app.get('/goto', function(req, res){
+
+    console.log(req.query)
+    drone.Goto(req.query.longitude_deg, req.query.latitude_deg, req.query.altitude_m, req.query.yaw_deg);
+    res.sendStatus(200);
 });
 
 server.listen(8081, function () {
